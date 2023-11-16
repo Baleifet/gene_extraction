@@ -1,4 +1,3 @@
- 
 '''
 a python script to extract protein sequences from genbank files given a search string for a specific annotation
     arguments:
@@ -18,11 +17,15 @@ from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
 import os
  
-feature_type = argv[1]
-search_string = argv[2]
-ext = argv[3] ## implement this!
-directory = argv[4]
- 
+try: 
+    feature_type = argv[1]
+    search_string = argv[2]
+    ext = argv[3] ## implement this!
+    directory = argv[4]
+except:
+    print("...")
+    exit()
+
 def parse_genbank_files(file_name,directory):
     #looks through all files in a directory and makes a temporary lsit of records
     records = []
@@ -78,8 +81,11 @@ def FASTAexport(sequences, file_name):
 translations_combined = {}
 
 for file_name in os.listdir(directory):
-    if file_name.endswith(".gbk"): #!!
-        records = parse_genbank_files(file_name,directory)
-        print('found ', len(records), search_string, ' in ',file_name)
-        translations_combined.update(proteinsquarry(records, search_string, feature_type))
+    try:
+        if file_name.endswith(".gbk"): #!!
+            records = parse_genbank_files(file_name,directory)
+            print('found', len(records), search_string, 'in', file_name)
+            translations_combined.update(proteinsquarry(records, search_string, feature_type))
+    except Exception as error:
+        print("There was an error reading:", file_name, str(error))
 FASTAexport(translations_combined, f'{os.path.basename(directory)}_{feature_type}_{search_string}.faa')
